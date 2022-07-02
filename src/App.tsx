@@ -25,7 +25,6 @@ const App = () => {
   }
 
   const handleChange = (e: any) => {
-    console.log('e', e.target.value);
     if (inputMinutes.current) {
       inputValue.current.textContent = secondToMinutes(e.target.value);
     }
@@ -54,10 +53,6 @@ const App = () => {
     if (inputMinutes) {
       inputMinutes.current.focus()
       inputValue.current.textContent = '0: 00: 00'
-      const clockTitle = screen.getByTestId('clock-id').textContent; 
-      const minutesInput = screen.getByPlaceholderText('typing minutes').nodeValue;
-      console.log('clockTitle', clockTitle)
-      console.log('minutesInput', minutesInput)
     }
   }, [])
   //haha
