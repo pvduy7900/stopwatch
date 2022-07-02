@@ -55,7 +55,6 @@ const App = () => {
       inputValue.current.textContent = '0: 00: 00'
     }
   }, [])
-  //haha
 
   return (
     <div className='container'>
