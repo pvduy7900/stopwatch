@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import { useEffect } from 'react';
 import './App.css'
 import Button from './components/Button';
+import ButtonGroupDisplay from './components/ButtonGroup';
 import DisplayTime from './components/DisplayTime';
 import Input from './components/Input';
 
@@ -13,7 +14,7 @@ const App = () => {
   let interval: any = null;
   const defaultSettingTimeDisplay = '0: 00: 00';
   const HOUR_IN_SECONDS = 3600;
-  
+
   const secondToMinutes = (second: string | number) => {
     const secondInput = Math.abs(Number(second));
     const hourResult = Math.floor(Number(secondInput) / HOUR_IN_SECONDS);
@@ -47,12 +48,6 @@ const App = () => {
     inputMinutes.current.focus();
   }
 
-  const buttonDisplay = [
-    {name: 'start' , handleEvent: handleStart},
-    {name: 'stop' , handleEvent: handleStop},
-    {name: 'reset' , handleEvent: handleReset},
-  ]
-
   useEffect(() => {
     if (inputMinutes) {
       inputMinutes.current.focus()
@@ -65,11 +60,11 @@ const App = () => {
       <div>Clock</div>
       <Input inputMinutesRef={inputMinutes} inputValueRef={inputValue} secondToMinutes={secondToMinutes} />
       <DisplayTime inputValueRef={inputValue} />
-      <div>
-        {
-          buttonDisplay.map((item) => (<Button name={item.name} callBackFunction={item.handleEvent} />))
-        }
-      </div>
+      <ButtonGroupDisplay buttons={[
+        {name: 'start' , handleEvent: handleStart},
+        {name: 'stop' , handleEvent: handleStop},
+        {name: 'reset' , handleEvent: handleReset},
+      ]} />
     </div>
   )
 }
