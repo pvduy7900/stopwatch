@@ -1,7 +1,9 @@
-import { screen } from '@testing-library/react';
 import React, { useRef } from 'react'
 import { useEffect } from 'react';
 import './App.css'
+import Button from './components/Button';
+import DisplayTime from './components/DisplayTime';
+import Input from './components/Input';
 
 const App = () => {
   const inputMinutes = useRef<any>(null);
@@ -9,25 +11,21 @@ const App = () => {
 
   let startFlag = false;
   let interval: any = null;
-
+  const defaultSettingTimeDisplay = '0: 00: 00';
+  const HOUR_IN_SECONDS = 3600;
+  
   const secondToMinutes = (second: string | number) => {
     const secondInput = Math.abs(Number(second));
-    const hourResult = Math.floor(Number(secondInput) / 3600);
-    const minutestest = Math.floor((Number(secondInput) - hourResult * 3600) / 60);
-    const secondResult = Number(secondInput) - (hourResult * 3600) - (minutestest * 60);
+    const hourResult = Math.floor(Number(secondInput) / HOUR_IN_SECONDS);
+    const minutestest = Math.floor((Number(secondInput) - hourResult * HOUR_IN_SECONDS) / 60);
+    const secondResult = Number(secondInput) - (hourResult * HOUR_IN_SECONDS) - (minutestest * 60);
     return `${hourResult}: ${String(minutestest).padStart(2, '0')}: ${String(secondResult).padStart(2, '0')}`
   }
 
   const handleIncreaseSecondTime = () => {
     const secondArray = String(inputValue.current.textContent).split(':');
-    const sumSecondTime = Number(secondArray[0]) * 3600 + Number(secondArray[1]) * 60 + Number(secondArray[2]);
+    const sumSecondTime = Number(secondArray[0]) * HOUR_IN_SECONDS + Number(secondArray[1]) * 60 + Number(secondArray[2]);
     inputValue.current.textContent = secondToMinutes(sumSecondTime + 1);
-  }
-
-  const handleChange = (e: any) => {
-    if (inputMinutes.current) {
-      inputValue.current.textContent = secondToMinutes(e.target.value);
-    }
   }
 
   const handleStart = () => {
@@ -45,29 +43,32 @@ const App = () => {
   const handleReset = () => {
     handleStop();
     inputMinutes.current.value = '';
-    inputValue.current.textContent = '0: 00: 00';
+    inputValue.current.textContent = defaultSettingTimeDisplay;
     inputMinutes.current.focus();
   }
+
+  const buttonDisplay = [
+    {name: 'start' , handleEvent: handleStart},
+    {name: 'stop' , handleEvent: handleStop},
+    {name: 'reset' , handleEvent: handleReset},
+  ]
 
   useEffect(() => {
     if (inputMinutes) {
       inputMinutes.current.focus()
-      inputValue.current.textContent = '0: 00: 00'
+      inputValue.current.textContent = defaultSettingTimeDisplay;
     }
   }, [])
 
   return (
     <div className='container'>
       <div>Clock</div>
-      <label>
-        <span>Type minutes</span>
-        <input type="number" placeholder='typing minutes' ref={inputMinutes} onChange={(e) => handleChange(e)} />
-      </label>
-      <div ref={inputValue} data-testid='clock-id' ></div>
+      <Input inputMinutesRef={inputMinutes} inputValueRef={inputValue} secondToMinutes={secondToMinutes} />
+      <DisplayTime inputValueRef={inputValue} />
       <div>
-        <button type='button' onClick={() => handleStart()} >start</button>
-        <button type='button' onClick={() => handleStop()} >stop</button>
-        <button type='button' onClick={() => handleReset()}>reset</button>
+        {
+          buttonDisplay.map((item) => (<Button name={item.name} callBackFunction={item.handleEvent} />))
+        }
       </div>
     </div>
   )
